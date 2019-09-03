@@ -1,4 +1,5 @@
 from room import Room
+from player import Player
 
 # Declare all the rooms
 
@@ -38,13 +39,48 @@ room['treasure'].s_to = room['narrow']
 #
 
 # Make a new player object that is currently in the 'outside' room.
+player1 = Player(room["outside"], "Hannah")
 
 # Write a loop that:
 #
 # * Prints the current room name
 # * Prints the current description (the textwrap module might be useful here).
 # * Waits for user input and decides what to do.
-#
+
+
+
+def displayPlayer(player):
+    print(f"Your current location: {player.room.roomName}")
+    print(player.room.desc)
+    print("### ### ### ### ### ###")
+    dir = input("Where would you like to go? ")
+
+    playerMove(player, dir)
+
+
+def playerMove(player, dir):
+        try:
+            if dir.upper() == "N" and hasattr(player.room, 'n_to'):
+                player.room = player.room.n_to
+            elif dir.upper() =="S" and hasattr(player.room, 's_to'):
+                player.room = player.room.s_to
+            elif dir.upper() == "W" and hasattr(player.room, 'w_to'):
+                player.room = player.room.w_to
+            elif dir.upper() == "E" and hasattr(player.room, 'e_to'):
+                player.room = player.room.e_to
+            else:
+                print('Wrong Move! You hit a wall! Remember to use "N", "S", "W", or "E" for direction.')
+            
+            displayPlayer(player)
+
+        except:
+            print('Wrong Move!!! Do you know where you want to go? Type in the direction using "N", "S", "W", or "E" or else you will hit a wall or fall off a cliff!')
+            dir = input("Where would you like to go? ")
+            playerMove(player, dir)
+
+
+displayPlayer(player1)
+
 # If the user enters a cardinal direction, attempt to move to the room there.
 # Print an error message if the movement isn't allowed.
 #
