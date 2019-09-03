@@ -1,5 +1,6 @@
 from room import Room
 from player import Player
+from item import Item
 
 # Declare all the rooms
 
@@ -39,7 +40,21 @@ room['treasure'].s_to = room['narrow']
 #
 
 # Make a new player object that is currently in the 'outside' room.
+
 player1 = Player(room["outside"], "Hannah")
+
+items = {
+    'toy' : Item("Toy", "A small playful thing for a child"),
+    'weapon' : Item("Weapon", "A large item that can cause some harm"),
+    'shield' : Item("Shield", "A large item that can protect player")
+}
+
+#initial set up to add items to rooms
+room['foyer'].addItem('toy')
+room['overlook'].addItem('weapon')
+room['overlook'].addItem('shield')
+room['narrow'].addItem('toy')
+room['narrow'].addItem('weapon')
 
 # Write a loop that:
 #
@@ -48,15 +63,51 @@ player1 = Player(room["outside"], "Hannah")
 # * Waits for user input and decides what to do.
 
 
-
 def displayPlayer(player):
-    print(f"Your current location: {player.room.roomName}")
-    print(player.room.desc)
-    print("### ### ### ### ### ###")
-    dir = input("Where would you like to go? ")
+   
+        print(f"My current location: {player.room.roomName}")
+        print(player.room.desc)
+        for i in player.room.items:
+            print(f"Item in this room: {i}")
+        print("### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###")
 
-    playerMove(player, dir)
+        #verb would be go, take and drop
+        intent = input("What would you like to do? #take #drop #n #w #s #e #q ").split(' ')
+        print(intent)
+        if len(intent) == 1:
+            if intent[0].lower() == "i":
+                for i in player.items:
+                    print(f"Inventory: {i}")
+                displayPlayer(player)
+            elif intent[0].lower() != "q":
+                playerMove(player, intent[0])
+        elif len(intent) == 2:
+            itemCollection(player, intent[0], intent[1])
 
+
+def itemCollection(player, action, item):
+    if item in player.room.items and action == "take":
+        player.addItem(item)
+        player.room.dropItem(item)
+        print(f"You just picked up a {item}")
+        print("### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###")
+
+        displayPlayer(player)
+    
+    elif item in player.items and action == "drop":
+        player.dropItem(item)
+        player.room.addItem(item)
+        print(f"You just dropped a {item}")
+        print("### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###")
+
+        displayPlayer(player)
+    else:
+        print(f"You cannot {action} {item}")
+        displayPlayer(player)
+
+
+# If the user enters a cardinal direction, attempt to move to the room there.
+# Print an error message if the movement isn't allowed.
 
 def playerMove(player, dir):
         try:
@@ -75,13 +126,8 @@ def playerMove(player, dir):
 
         except:
             print('Wrong Move!!! Do you know where you want to go? Type in the direction using "N", "S", "W", or "E" or else you will hit a wall or fall off a cliff!')
-            dir = input("Where would you like to go? ")
-            playerMove(player, dir)
-
+            displayPlayer(player)
 
 displayPlayer(player1)
 
-# If the user enters a cardinal direction, attempt to move to the room there.
-# Print an error message if the movement isn't allowed.
-#
 # If the user enters "q", quit the game.
