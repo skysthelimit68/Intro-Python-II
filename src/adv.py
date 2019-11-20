@@ -59,7 +59,6 @@ room['narrow'].addItem(items['redbull'])
 
 # Make a new player object that is currently in the 'outside' room.
 
-new_player = Player("Control_Alt_Delete", room['outside'])
 
 # Write a loop that:
 #
@@ -105,14 +104,14 @@ def move_item(player, input):
         print(f"---\nYour score is {player.score}\n---")
     elif input_arr[1]: 
         if input_arr[0] == "take":
-            if items[input_arr[1].lower()] in player.current_room.items:
+            if input_arr[1].lower() in items and items[input_arr[1].lower()] in player.current_room.items:
                 player.addItem(items[input_arr[1].lower()])
                 player.current_room.removeItem(items[input_arr[1].lower()])
                 items[input_arr[1].lower()].on_take()
             else: 
                 print(f"{input_arr[1]} is not in this room")
         if input_arr[0] == "drop":
-            if items[input_arr[1].lower()] in player.items:
+            if input_arr[1].lower() in items and items[input_arr[1].lower()] in player.items:
                 player.dropItem(items[input_arr[1].lower()])
                 player.current_room.addItem(items[input_arr[1].lower()])
                 items[input_arr[1].lower()].on_drop()
@@ -120,29 +119,36 @@ def move_item(player, input):
                 print(f"You do not have {input_arr[1]}")
     else:
         print("Invalid input.")            
-    
-player_status = True
-dir_input = ['s', 'e', 'n', 'w']
-item_input = ['take', 'drop', 'i', 'inventory', 'score']
+
+def start_game(name, room_name):
+    _player = Player(name, room[room_name])
+    dir_input = ['s', 'e', 'n', 'w']
+    item_input = ['take', 'drop', 'i', 'inventory', 'score']
+    print(f"---\n\n{name}, you have successfully entered '{_player.current_room.name}'\n{_player.current_room.description}\n\nThere are {len(_player.current_room.items)} item(s) in this room\n")
+    for i in range(0, len(_player.current_room.items)) :
+        print(f"Item {i+1}: {_player.current_room.items[i].name}\n")
+    print("---")
+    print("\nValid Commands: n, e, w, s, i, inventory, score, take, drop, and name of the item\n")
+
+    while _player.status:
+        user_input = input("What would you like to do? ")
+        input_arr = user_input.split(" ")
+        if user_input == "q": _player.status = False
+
+        elif user_input in dir_input and move_player(_player, user_input): 
+            print(f"---\n\nYou have successfully entered '{_player.current_room.name}'\n{_player.current_room.description}\n\nThere are {len(_player.current_room.items)} item(s) in this room\n")
+            for i in range(0, len(_player.current_room.items)) :
+                print(f"Item {i+1}: {_player.current_room.items[i].name}")
+            print("\n---\n")      
+        elif input_arr[0] in item_input:
+            move_item(_player, user_input)
+        else:
+            print(f"THAT'S NOT A VALID MOVE! \n---")
 
 
-print(f"---\n\nYou have successfully entered '{new_player.current_room.name}'\n{new_player.current_room.description}\n\nThere are {len(new_player.current_room.items)} item(s) in this room\n")
-for i in range(0, len(new_player.current_room.items)) :
-    print(f"Item {i+1}: {new_player.current_room.items[i].name}\n")
-print("---")
-print("\nValid Commands: n, e, w, s, i, inventory, score, take, drop, and name of the item\n")
+# player_status = True
 
-while player_status:
-    user_input = input("What would you like to do? ")
-    input_arr = user_input.split(" ")
-    if user_input == "q": player_status = False
+player_name = input("Enter the player's name: ")
+start_game(player_name, 'outside')
 
-    elif user_input in dir_input and move_player(new_player, user_input): 
-        print(f"---\n\nYou have successfully entered '{new_player.current_room.name}'\n{new_player.current_room.description}\n\nThere are {len(new_player.current_room.items)} item(s) in this room\n")
-        for i in range(0, len(new_player.current_room.items)) :
-            print(f"Item {i+1}: {new_player.current_room.items[i].name}")
-        print("\n---\n")      
-    elif input_arr[0] in item_input:
-        move_item(new_player, user_input)
-    else:
-        print(f"THAT'S NOT A VALID MOVE! \n---")
+
