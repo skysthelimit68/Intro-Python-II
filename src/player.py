@@ -2,16 +2,9 @@
 # currently.
 
 class Player:
-    def __init__(self, room, name):
-        self.room = room
+    def __init__(self, name, current_room):
         self.name = name
-        self.items = []
-        
-    def __str__(self):
-        return "Where am I: {self.room.roomName}, Name: {self.name}".format(self=self)
+        self.current_room = current_room
 
-    def addItem(self, item):
-        self.items.append(item)
-    
-    def dropItem(self, item):
-        self.items.remove(item)
+    def __str__(self):
+        return f"Current Room: {self.current_room.name}, Name: {self.name}"
