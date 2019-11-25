@@ -107,7 +107,7 @@ def move_item(player, input):
         print("---")
     elif input == "score":
         print(f"---\nYour score is {player.score}\n---")
-    elif input_arr[1]: 
+    elif len(input_arr) > 1: 
         if input_arr[0] == "take":
             if input_arr[1].lower() in items and items[input_arr[1].lower()] in player.current_room.items:
                 player.addItem(items[input_arr[1].lower()])
